@@ -3,7 +3,7 @@ using Xunit;
 
 namespace ShoppingBasket.Tests
 {
-    public class UnitTest1
+    public class BasketTests
     {
         [Fact]
         public void Test1()
