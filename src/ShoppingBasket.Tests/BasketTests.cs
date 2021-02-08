@@ -6,9 +6,9 @@ namespace ShoppingBasket.Tests
     public class BasketTests
     {
         [Fact]
-        public void Test1()
+        public void CreateNewOrder()
         {
-
+            // var basket = new SimpleBasket();
         }
     }
 }
