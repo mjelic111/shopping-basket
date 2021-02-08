@@ -1,4 +1,6 @@
 using System;
+using BasketLibrary.Models;
+using FluentAssertions;
 using Xunit;
 
 namespace ShoppingBasket.Tests
@@ -8,7 +10,16 @@ namespace ShoppingBasket.Tests
         [Fact]
         public void CreateNewOrder()
         {
-            // var basket = new SimpleBasket();
+            // arrange
+            var basket = new SimpleBasket();
+
+            // act
+            var order = basket.CreateOrder();
+
+            // assert
+            order.Should().NotBeNull();
+            order.Id.Should().NotBeEmpty();
+
         }
     }
 }
