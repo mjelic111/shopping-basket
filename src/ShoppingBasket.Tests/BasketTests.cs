@@ -1,6 +1,8 @@
 using System;
+using System.Linq;
 using BasketLibrary.Models;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Xunit;
 
 namespace ShoppingBasket.Tests
@@ -10,15 +12,29 @@ namespace ShoppingBasket.Tests
         [Fact]
         public void CreateNewOrder()
         {
+
+            using var loggerFactory = LoggerFactory.Create(builder =>
+            {
+                builder
+                    .AddFilter("Microsoft", LogLevel.Warning)
+                    .AddFilter("System", LogLevel.Warning)
+                    .AddConsole();
+            });
+
+            ILogger logger = loggerFactory.CreateLogger<BasketTests>();
+
             // arrange
-            var basket = new SimpleBasket();
+            var basket = new SimpleBasket(logger);
+            var order = new Order();
 
             // act
-            var order = basket.CreateOrder();
+            basket.AddOrder(order);
+            var createdOrder = basket.GetAllOrders().First();
 
             // assert
-            order.Should().NotBeNull();
-            order.Id.Should().NotBeEmpty();
+            createdOrder.Should().NotBeNull();
+            createdOrder.Id.Should().NotBeEmpty();
+            createdOrder.Id.Should().Be(order.Id);
 
         }
     }

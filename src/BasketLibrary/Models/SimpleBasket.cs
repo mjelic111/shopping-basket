@@ -1,38 +1,53 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using Microsoft.Extensions.Logging;
 
 namespace BasketLibrary.Models
 {
     public class SimpleBasket : IBasket
     {
         List<IOrder> orders = new List<IOrder>();
+        public ILogger Logger { get; }
 
-        public string CompleteOrder(string orderId)
+        public SimpleBasket(ILogger logger)
         {
-            throw new System.NotImplementedException();
+            this.Logger = logger;
         }
 
-        public IOrder CreateOrder()
+        public void AddOrder(IOrder order)
         {
-            var orderId = Guid.NewGuid().ToString();
-            var order = new Order(orderId);
+            Logger.LogInformation("Creating new order...");
             orders.Add(order);
-            return order;
+            Logger.LogInformation($"Created order with id: {order.Id}");
         }
 
         public IEnumerable<IOrder> GetAllOrders()
         {
-            throw new System.NotImplementedException();
+            return orders.ToList();
         }
 
         public IOrder GetOrderById(string orderId)
         {
-            throw new System.NotImplementedException();
+            var order = orders.Where(o => o.Id.Equals(orderId, StringComparison.OrdinalIgnoreCase)).SingleOrDefault();
+            if (order != null)
+            {
+                return order;
+            }
+
+            throw new Exception($"Order with id: {orderId}, not found");
         }
 
         public string RemoveOrder(string orderId)
         {
-            throw new System.NotImplementedException();
+            var order = GetOrderById(orderId);
+            if (order != null)
+            {
+                orders = orders.Where(o => !o.Id.Equals(orderId, StringComparison.OrdinalIgnoreCase)).ToList();
+                return orderId;
+            }
+
+            throw new Exception($"Order with id: {orderId}, not found");
         }
     }
 }

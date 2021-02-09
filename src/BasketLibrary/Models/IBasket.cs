@@ -4,11 +4,9 @@ namespace BasketLibrary.Models
 {
     public interface IBasket
     {
-        IOrder CreateOrder();
+        void AddOrder(IOrder order);
 
         IOrder GetOrderById(string orderId);
-
-        string CompleteOrder(string orderId);
 
         string RemoveOrder(string orderId);
 

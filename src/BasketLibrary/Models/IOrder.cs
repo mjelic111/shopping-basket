@@ -6,7 +6,7 @@ namespace BasketLibrary.Models
     {
         string Id { get; }
 
-        void AddArticle(IArticle article);
+        void AddArticle(IArticle article, int quantity = 1);
 
         void RemoveArticle(string articleId, int quantity = 1);
 
@@ -14,7 +14,7 @@ namespace BasketLibrary.Models
 
         void RegisterDiscount(IDiscount discount);
 
-        IEnumerable<IArticle> ListArticles();
+        IEnumerable<IArticle> GetAllArticles();
 
         void PrintOrder();
 

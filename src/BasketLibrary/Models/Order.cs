@@ -1,16 +1,20 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace BasketLibrary.Models
 {
     public class Order : IOrder
     {
-        public Order(string id)
-        {
-            Id = id;
-        }
         public string Id { get; }
+        private List<IDiscount> discounts = new List<IDiscount>();
 
-        public void AddArticle(IArticle article)
+        public Order()
+        {
+            Id = Guid.NewGuid().ToString();
+        }
+
+        public void AddArticle(IArticle article, int quantity = 1)
         {
             throw new System.NotImplementedException();
         }
@@ -20,7 +24,7 @@ namespace BasketLibrary.Models
             throw new System.NotImplementedException();
         }
 
-        public IEnumerable<IArticle> ListArticles()
+        public IEnumerable<IArticle> GetAllArticles()
         {
             throw new System.NotImplementedException();
         }
@@ -32,7 +36,7 @@ namespace BasketLibrary.Models
 
         public void RegisterDiscount(IDiscount discount)
         {
-            throw new System.NotImplementedException();
+            discounts.Add(discount);
         }
 
         public void RemoveArticle(string articleId, int quantity = 1)
@@ -40,34 +44,5 @@ namespace BasketLibrary.Models
             throw new System.NotImplementedException();
         }
 
-        void IOrder.AddArticle(IArticle article)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        double IOrder.GetTotalPrice()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        IEnumerable<IArticle> IOrder.ListArticles()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        void IOrder.PrintOrder()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        void IOrder.RegisterDiscount(IDiscount discount)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        void IOrder.RemoveArticle(string articleId, int quantity)
-        {
-            throw new System.NotImplementedException();
-        }
     }
 }
