@@ -4,7 +4,7 @@ namespace BasketLibrary.Models
 {
     public interface IOrder
     {
-        string Id { get; internal set; }
+        string Id { get; }
 
         void AddArticle(IArticle article);
 
