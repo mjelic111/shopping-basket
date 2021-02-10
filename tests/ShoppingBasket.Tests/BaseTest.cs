@@ -29,7 +29,7 @@ namespace ShoppingBasket.Tests
             articleCatalogService = new ArticleCatalogService();
 
             // order service
-            orderService = new OrderService(orderServiceLogger);
+            orderService = new OrderService(orderServiceLogger, articleCatalogService);
         }
 
         protected string GenerateGuid()

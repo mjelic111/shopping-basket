@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using BasketLibrary.Models;
 
 namespace BasketLibrary.Services
@@ -6,8 +7,8 @@ namespace BasketLibrary.Services
     {
         string CreateNewOrder();
         Response<string> AddArticleToOrder(string orderId, string articleId, int quantity = 1);
-        Response<string> SetArticleQuantity(string orderId, string articleId, int quantity);
-        Response<string> RemoveArticleFromOrder(string orderId, string articleId);
+        Response<IEnumerable<OrderItemDto>> GetAllOrderItems(string orderId);
+        Response<string> UpdateOrderItemQuantity(string orderId, string articleId, int quantity);
         Response<string> RegisterDiscount(IDiscountService discountService);
         double GetOrderTotalPrice(string orderId);
         void PrintOrder();
