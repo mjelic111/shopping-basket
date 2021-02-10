@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BasketConsole", "src\Basket
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BasketLibrary", "src\BasketLibrary\BasketLibrary.csproj", "{4247089E-828F-48DC-85E7-FF73C78FDD90}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppingBasket.Tests", "src\ShoppingBasket.Tests\ShoppingBasket.Tests.csproj", "{F1825E6E-9301-4784-B169-D3B4346DDF9B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppingBasket.Tests", "tests\ShoppingBasket.Tests\ShoppingBasket.Tests.csproj", "{F1825E6E-9301-4784-B169-D3B4346DDF9B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
