@@ -7,9 +7,8 @@ namespace ShoppingBasket.Tests
 {
     public abstract class BaseTest
     {
-        protected ILogger<SimpleBasket> basketLogger;
-        protected ILogger<Order> orderLogger;
         protected IArticleCatalogService articleCatalogService;
+        protected OrderService orderService;
 
         public BaseTest()
         {
@@ -23,12 +22,14 @@ namespace ShoppingBasket.Tests
                     .AddConsole();
             });
 
-            basketLogger = loggerFactory.CreateLogger<SimpleBasket>();
-            orderLogger = loggerFactory.CreateLogger<Order>();
+            var basketLogger = loggerFactory.CreateLogger<SimpleBasket>();
+            var orderServiceLogger = loggerFactory.CreateLogger<OrderService>();
 
-            // generate article catalog
+            // article catalog service
             articleCatalogService = new ArticleCatalogService();
 
+            // order service
+            orderService = new OrderService(orderServiceLogger);
         }
 
         protected string GenerateGuid()

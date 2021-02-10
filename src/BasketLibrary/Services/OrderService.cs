@@ -21,37 +21,35 @@ namespace BasketLibrary.Services
             orders.Add(new OrderDto { Id = id, OrderItems = new List<OrderItemDto>() });
             return id;
         }
-        public void AddArticleToOrder(string orderId, string articleId, int quantity = 1)
-        {
-            // var order = orders.Where(o => orderId.Equals(o.Id, StringComparison.OrdinalIgnoreCase)).SingleOrDefault();
 
-            throw new System.NotImplementedException();
+        public Response<string> AddArticleToOrder(string orderId, string articleId, int quantity = 1)
+        {
+            throw new NotImplementedException();
         }
 
-        public void RemoveArticleFromOrder(string orderId, string articleId)
+        public Response<string> SetArticleQuantity(string orderId, string articleId, int quantity)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
-        public void SetArticleQuantity(string orderId, string articleId, int quantity)
+        public Response<string> RemoveArticleFromOrder(string orderId, string articleId)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
+        }
+
+        public Response<string> RegisterDiscount(IDiscountService discountService)
+        {
+            throw new NotImplementedException();
         }
 
         public double GetOrderTotalPrice(string orderId)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public void PrintOrder()
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
-
-        public void RegisterDiscount(IDiscountService discountService)
-        {
-            throw new System.NotImplementedException();
-        }
-
     }
 }
