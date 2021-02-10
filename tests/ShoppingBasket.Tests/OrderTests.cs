@@ -1,3 +1,6 @@
+using System;
+using System.Linq;
+using BasketLibrary.Models;
 using FluentAssertions;
 using Xunit;
 
@@ -120,6 +123,58 @@ namespace ShoppingBasket.Tests
             // assert
             response.IsError.Should().Be(false);
             response.Data.Should().Be($"Article {name} added to order, new quantity: {quantity}!");
+        }
+
+        [Fact]
+        public void GetAllOrderItems_Success()
+        {
+            // arrange
+            var article1 = new ArticleDto { Id = GenerateGuid(), Name = "Butter", Price = 0.8 };
+            var article2 = new ArticleDto { Id = GenerateGuid(), Name = "Milk", Price = 1.15 };
+            var article3 = new ArticleDto { Id = GenerateGuid(), Name = "Bread", Price = 1.0 };
+            articleCatalogService.RegisterArticle(article1);
+            articleCatalogService.RegisterArticle(article2);
+            articleCatalogService.RegisterArticle(article3);
+            var orderId = orderService.CreateNewOrder();
+            orderService.AddArticleToOrder(orderId, article1.Id, 10);
+            orderService.AddArticleToOrder(orderId, article2.Id, 10);
+            orderService.AddArticleToOrder(orderId, article3.Id, 10);
+
+            // act
+            var response = orderService.GetAllOrderItems(orderId);
+
+            // assert
+            response.IsError.Should().Be(false);
+            response.Data.Count().Should().Be(3);
+
+        }
+
+        [Fact]
+        public void GetAllOrderItems_SuccessRemoveItem()
+        {
+            // arrange
+            var article1 = new ArticleDto { Id = GenerateGuid(), Name = "Butter", Price = 0.8 };
+            var article2 = new ArticleDto { Id = GenerateGuid(), Name = "Milk", Price = 1.15 };
+            var article3 = new ArticleDto { Id = GenerateGuid(), Name = "Bread", Price = 1.0 };
+            articleCatalogService.RegisterArticle(article1);
+            articleCatalogService.RegisterArticle(article2);
+            articleCatalogService.RegisterArticle(article3);
+            var orderId = orderService.CreateNewOrder();
+            orderService.AddArticleToOrder(orderId, article1.Id, 10);
+            orderService.AddArticleToOrder(orderId, article2.Id, 10);
+            orderService.AddArticleToOrder(orderId, article3.Id, 10);
+
+            // act
+            orderService.UpdateOrderItemQuantity(orderId, article1.Id, 0);
+            orderService.UpdateOrderItemQuantity(orderId, article2.Id, 0);
+            var response = orderService.GetAllOrderItems(orderId);
+
+            // assert
+            response.IsError.Should().Be(false);
+            response.Data.Count().Should().Be(1);
+            response.Data.First().Article.Name.Should().Be("Bread");
+            response.Data.First().Article.Price.Should().Be(1.0);
+
         }
     }
 }
