@@ -4,6 +4,7 @@ namespace BasketLibrary.Models
 {
     public interface IDiscount
     {
-        void ApplyDiscount(IEnumerable<IArticle> articles);
+        string Id { get; }
+        void ApplyDiscount(IEnumerable<Article> articles);
     }
 }

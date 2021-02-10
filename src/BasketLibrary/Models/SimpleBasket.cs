@@ -8,11 +8,11 @@ namespace BasketLibrary.Models
     public class SimpleBasket : IBasket
     {
         List<IOrder> orders = new List<IOrder>();
-        public ILogger Logger { get; }
+        public ILogger<SimpleBasket> Logger { get; }
 
-        public SimpleBasket(ILogger logger)
+        public SimpleBasket(ILogger<SimpleBasket> logger)
         {
-            this.Logger = logger;
+            Logger = logger;
         }
 
         public void AddOrder(IOrder order)

@@ -7,25 +7,16 @@ using Xunit;
 
 namespace ShoppingBasket.Tests
 {
-    public class BasketTests
+    public class BasketTests : BaseTest
     {
         [Fact]
         public void CreateNewOrder()
         {
 
-            using var loggerFactory = LoggerFactory.Create(builder =>
-            {
-                builder
-                    .AddFilter("Microsoft", LogLevel.Warning)
-                    .AddFilter("System", LogLevel.Warning)
-                    .AddConsole();
-            });
-
-            ILogger logger = loggerFactory.CreateLogger<BasketTests>();
-
             // arrange
-            var basket = new SimpleBasket(logger);
-            var order = new Order();
+            var basket = new SimpleBasket(basketLogger);
+            IArticleCatalog articleCatalog = null;
+            var order = new Order(orderLogger, articleCatalog);
 
             // act
             basket.AddOrder(order);
