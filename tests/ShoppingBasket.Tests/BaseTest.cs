@@ -22,7 +22,6 @@ namespace ShoppingBasket.Tests
                     .AddConsole();
             });
 
-            var basketLogger = loggerFactory.CreateLogger<SimpleBasket>();
             var orderServiceLogger = loggerFactory.CreateLogger<OrderService>();
 
             // article catalog service
