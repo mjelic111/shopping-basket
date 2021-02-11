@@ -84,7 +84,7 @@ namespace ShoppingBasket.Tests
         public void RegisterArticle_ShouldSuccessfullyRegister()
         {
             // arrange
-            var article = new ArticleDto { Id = GenerateGuid(), Name = "Test", Price = 100.50 };
+            var article = new ArticleDto { Id = GenerateGuid(), Name = "Test", Price = new decimal(100.50) };
             // act
             var response = articleCatalogService.RegisterArticle(article);
             // assert
@@ -96,7 +96,7 @@ namespace ShoppingBasket.Tests
         {
             // arrange
             InitArticlesCatalog();
-            var article = new ArticleDto { Id = GenerateGuid(), Name = "Milk", Price = 100.50 };
+            var article = new ArticleDto { Id = GenerateGuid(), Name = "Milk", Price = new decimal(100.50) };
             // act
             var response = articleCatalogService.RegisterArticle(article);
             // assert
@@ -109,7 +109,7 @@ namespace ShoppingBasket.Tests
         {
             // arrange
             var id = InitArticlesCatalog();
-            var article = new ArticleDto { Id = id, Name = "Test", Price = 100.50 };
+            var article = new ArticleDto { Id = id, Name = "Test", Price = new decimal(100.50) };
             // act
             var response = articleCatalogService.RegisterArticle(article);
             // assert

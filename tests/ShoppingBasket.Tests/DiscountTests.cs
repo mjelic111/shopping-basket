@@ -57,7 +57,7 @@ namespace ShoppingBasket.Tests
             articleCatalogService.RegisterArticle(breadArticle);
 
             var orderId = orderService.CreateNewOrder();
-            var discountValue = 1d;
+            var discountValue = 1;
             orderService.RegisterDiscount(orderId, new SimpleDiscountService(discountValue));
             orderService.AddArticleToOrder(orderId, butterArticle.Id, 3);
             orderService.AddArticleToOrder(orderId, milkArticle.Id, 2);
@@ -79,7 +79,7 @@ namespace ShoppingBasket.Tests
             articleCatalogService.RegisterArticle(breadArticle);
 
             var orderId = orderService.CreateNewOrder();
-            var discountValue = 100d;
+            var discountValue = 100;
             orderService.RegisterDiscount(orderId, new SimpleDiscountService(discountValue));
             orderService.AddArticleToOrder(orderId, butterArticle.Id, 3);
             orderService.AddArticleToOrder(orderId, milkArticle.Id, 2);
@@ -88,6 +88,41 @@ namespace ShoppingBasket.Tests
             var price = orderService.GetOrderTotalPrice(orderId);
             // assert
             price.Should().Be(0);
+        }
+
+        [Fact]
+        public void GetOrderTotalPrice_BreadDiscount()
+        {
+            // arrange
+            articleCatalogService.RegisterArticle(butterArticle);
+            articleCatalogService.RegisterArticle(milkArticle);
+            articleCatalogService.RegisterArticle(breadArticle);
+
+            var orderId = orderService.CreateNewOrder();
+            orderService.RegisterDiscount(orderId, new BreadDiscountService(articleCatalogService));
+            orderService.AddArticleToOrder(orderId, butterArticle.Id, 2);
+            orderService.AddArticleToOrder(orderId, breadArticle.Id, 2);
+            // act
+            var price = orderService.GetOrderTotalPrice(orderId);
+            // assert
+            price.Should().Be(new decimal(3.1));
+        }
+
+        [Fact]
+        public void GetOrderTotalPrice_MilkDiscount()
+        {
+            // arrange
+            articleCatalogService.RegisterArticle(butterArticle);
+            articleCatalogService.RegisterArticle(milkArticle);
+            articleCatalogService.RegisterArticle(breadArticle);
+
+            var orderId = orderService.CreateNewOrder();
+            orderService.RegisterDiscount(orderId, new MilkDiscountService(articleCatalogService));
+            orderService.AddArticleToOrder(orderId, milkArticle.Id, 4);
+            // act
+            var price = orderService.GetOrderTotalPrice(orderId);
+            // assert
+            price.Should().Be(new decimal(3.45));
         }
     }
 

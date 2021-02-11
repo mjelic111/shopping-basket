@@ -10,7 +10,6 @@ namespace BasketLibrary.Services
         Response<IEnumerable<OrderItemDto>> GetAllOrderItems(string orderId);
         Response<string> UpdateOrderItemQuantity(string orderId, string articleId, int quantity);
         Response<string> RegisterDiscount(string orderId, IDiscountService discountService);
-        double GetOrderTotalPrice(string orderId);
-        void PrintOrder();
+        decimal GetOrderTotalPrice(string orderId);
     }
 }

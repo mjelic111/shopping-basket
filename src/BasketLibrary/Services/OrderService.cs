@@ -28,6 +28,7 @@ namespace BasketLibrary.Services
 
         public Response<string> AddArticleToOrder(string orderId, string articleId, int quantity = 1)
         {
+            OrderDto order;
             if (quantity < 1 || quantity > 1000)
             {
                 return Response<string>.Error("Quantity out of range!");
@@ -37,8 +38,12 @@ namespace BasketLibrary.Services
             {
                 return Response<string>.Error($"Article with id: {articleId} not found!");
             }
-            var order = FindOrderById(orderId);
-            if (order == null)
+            try
+            {
+                order = FindOrderById(orderId);
+
+            }
+            catch (Exception)
             {
                 return Response<string>.Error($"Order with id: {orderId} not found!");
             }
@@ -98,11 +103,15 @@ namespace BasketLibrary.Services
 
         public Response<string> RegisterDiscount(string orderId, IDiscountService discountService)
         {
-            var order = FindOrderById(orderId);
-            if (order == null)
+            try
+            {
+                var order = FindOrderById(orderId);
+            }
+            catch (Exception)
             {
                 return Response<string>.Error($"Order with id: {orderId} not found!");
             }
+
             try
             {
                 var discountServiceId = orderRepository.AddDiscountToOrder(orderId, discountService);
@@ -114,24 +123,20 @@ namespace BasketLibrary.Services
             }
         }
 
-        public double GetOrderTotalPrice(string orderId)
+        public decimal GetOrderTotalPrice(string orderId)
         {
             try
             {
-                var items = orderRepository.GetAllOrderItems(orderId);
+                var items = orderRepository.GetAllOrderItems(orderId).ToList();
 
                 var sum = items.Sum(i => i.Article.Price * i.Quantity);
-                var discountPrice = 0d;
+                decimal discountPrice = 0;
                 foreach (var discountService in orderRepository.GetAllOrderDiscounts(orderId))
                 {
-                    var response = discountService.CalculateDiscount();
+                    var response = discountService.CalculateDiscount(items);
                     if (response.IsError == false)
                     {
                         discountPrice += response.Data.Price;
-                    }
-                    else
-                    {
-                        throw new Exception(response.ErrorMessage);
                     }
                 }
                 var totalSum = sum - discountPrice;
@@ -145,11 +150,6 @@ namespace BasketLibrary.Services
             {
                 throw ex;
             }
-        }
-
-        public void PrintOrder()
-        {
-            throw new NotImplementedException();
         }
 
         public Response<IEnumerable<OrderItemDto>> GetAllOrderItems(string orderId)
