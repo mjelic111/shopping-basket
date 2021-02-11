@@ -116,7 +116,35 @@ namespace BasketLibrary.Services
 
         public double GetOrderTotalPrice(string orderId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var items = orderRepository.GetAllOrderItems(orderId);
+
+                var sum = items.Sum(i => i.Article.Price * i.Quantity);
+                var discountPrice = 0d;
+                foreach (var discountService in orderRepository.GetAllOrderDiscounts(orderId))
+                {
+                    var response = discountService.CalculateDiscount();
+                    if (response.IsError == false)
+                    {
+                        discountPrice += response.Data.Price;
+                    }
+                    else
+                    {
+                        throw new Exception(response.ErrorMessage);
+                    }
+                }
+                var totalSum = sum - discountPrice;
+                if (totalSum < 0)
+                {
+                    totalSum = 0;
+                }
+                return totalSum;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         public void PrintOrder()

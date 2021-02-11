@@ -47,6 +47,48 @@ namespace ShoppingBasket.Tests
             response.IsError.Should().Be(true);
             response.ErrorMessage.Should().Be($"Order with id: {orderId} not found!");
         }
+
+        [Fact]
+        public void GetOrderTotalPrice_SimpleDiscount()
+        {
+            // arrange
+            articleCatalogService.RegisterArticle(butterArticle);
+            articleCatalogService.RegisterArticle(milkArticle);
+            articleCatalogService.RegisterArticle(breadArticle);
+
+            var orderId = orderService.CreateNewOrder();
+            var discountValue = 1d;
+            orderService.RegisterDiscount(orderId, new SimpleDiscountService(discountValue));
+            orderService.AddArticleToOrder(orderId, butterArticle.Id, 3);
+            orderService.AddArticleToOrder(orderId, milkArticle.Id, 2);
+            orderService.AddArticleToOrder(orderId, breadArticle.Id, 5);
+            // act
+            var price = orderService.GetOrderTotalPrice(orderId);
+            // assert
+            var expectedPrice = butterArticle.Price * 3 + milkArticle.Price * 2 + breadArticle.Price * 5;
+            expectedPrice -= discountValue;
+            price.Should().Be(expectedPrice);
+        }
+
+        [Fact]
+        public void GetOrderTotalPrice_BigSimpleDiscount()
+        {
+            // arrange
+            articleCatalogService.RegisterArticle(butterArticle);
+            articleCatalogService.RegisterArticle(milkArticle);
+            articleCatalogService.RegisterArticle(breadArticle);
+
+            var orderId = orderService.CreateNewOrder();
+            var discountValue = 100d;
+            orderService.RegisterDiscount(orderId, new SimpleDiscountService(discountValue));
+            orderService.AddArticleToOrder(orderId, butterArticle.Id, 3);
+            orderService.AddArticleToOrder(orderId, milkArticle.Id, 2);
+            orderService.AddArticleToOrder(orderId, breadArticle.Id, 5);
+            // act
+            var price = orderService.GetOrderTotalPrice(orderId);
+            // assert
+            price.Should().Be(0);
+        }
     }
 
 }

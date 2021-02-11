@@ -176,5 +176,24 @@ namespace ShoppingBasket.Tests
             response.Data.First().Article.Price.Should().Be(1.0);
 
         }
+
+        [Fact]
+        public void GetOrderTotalPrice_SumWithoutDiscount()
+        {
+            // arrange
+            articleCatalogService.RegisterArticle(butterArticle);
+            articleCatalogService.RegisterArticle(milkArticle);
+            articleCatalogService.RegisterArticle(breadArticle);
+
+            var orderId = orderService.CreateNewOrder();
+            orderService.AddArticleToOrder(orderId, butterArticle.Id, 3);
+            orderService.AddArticleToOrder(orderId, milkArticle.Id, 2);
+            orderService.AddArticleToOrder(orderId, breadArticle.Id, 5);
+            // act
+            var price = orderService.GetOrderTotalPrice(orderId);
+            // assert
+            var expectedPrice = butterArticle.Price * 3 + milkArticle.Price * 2 + breadArticle.Price * 5;
+            price.Should().Be(expectedPrice);
+        }
     }
 }

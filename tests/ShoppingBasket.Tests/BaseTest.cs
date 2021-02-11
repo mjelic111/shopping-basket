@@ -11,6 +11,9 @@ namespace ShoppingBasket.Tests
         protected IArticleCatalogService articleCatalogService;
         protected OrderRepository orderRepository;
         protected OrderService orderService;
+        protected readonly ArticleDto butterArticle;
+        protected readonly ArticleDto milkArticle;
+        protected readonly ArticleDto breadArticle;
 
         public BaseTest()
         {
@@ -32,6 +35,10 @@ namespace ShoppingBasket.Tests
             orderRepository = new OrderRepository();
             // order service
             orderService = new OrderService(orderServiceLogger, articleCatalogService, orderRepository);
+            // articles
+            butterArticle = new ArticleDto { Id = Guid.NewGuid().ToString(), Name = "Butter", Price = 0.8 };
+            milkArticle = new ArticleDto { Id = Guid.NewGuid().ToString(), Name = "Milk", Price = 1.15 };
+            breadArticle = new ArticleDto { Id = Guid.NewGuid().ToString(), Name = "Bread", Price = 1.0 };
         }
 
         protected string GenerateGuid()

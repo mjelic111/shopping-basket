@@ -23,16 +23,17 @@ namespace BasketLibrary.Repositories
 
         public OrderDto GetOrderById(string id)
         {
-            return orders.Where(o => o.Id.Equals(id, StringComparison.OrdinalIgnoreCase)).SingleOrDefault();
+            var order = orders.Where(o => o.Id.Equals(id, StringComparison.OrdinalIgnoreCase)).SingleOrDefault();
+            if (order == null)
+            {
+                throw new Exception($"Order with id: {id}, not found!");
+            }
+            return order;
         }
 
         public string AddDiscountToOrder(string orderId, IDiscountService discountService)
         {
             var order = GetOrderById(orderId);
-            if (order == null)
-            {
-                throw new Exception($"Order with id: {orderId}, not found!");
-            }
             if (order.DiscountServices.Any(d => d.Id.Equals(discountService.Id, StringComparison.OrdinalIgnoreCase)))
             {
                 throw new Exception($"Discount with id: {discountService.Id} allready registered!");
@@ -42,5 +43,16 @@ namespace BasketLibrary.Repositories
 
         }
 
+        public IEnumerable<OrderItemDto> GetAllOrderItems(string orderId)
+        {
+            var order = GetOrderById(orderId);
+            return order.OrderItems;
+        }
+
+        public IEnumerable<IDiscountService> GetAllOrderDiscounts(string orderId)
+        {
+            var order = GetOrderById(orderId);
+            return order.DiscountServices;
+        }
     }
 }
