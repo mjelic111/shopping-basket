@@ -1,5 +1,6 @@
 using System;
 using BasketLibrary.Models;
+using BasketLibrary.Repositories;
 using BasketLibrary.Services;
 using Microsoft.Extensions.Logging;
 
@@ -8,6 +9,7 @@ namespace ShoppingBasket.Tests
     public abstract class BaseTest
     {
         protected IArticleCatalogService articleCatalogService;
+        protected OrderRepository orderRepository;
         protected OrderService orderService;
 
         public BaseTest()
@@ -26,9 +28,10 @@ namespace ShoppingBasket.Tests
 
             // article catalog service
             articleCatalogService = new ArticleCatalogService();
-
+            // order repository
+            orderRepository = new OrderRepository();
             // order service
-            orderService = new OrderService(orderServiceLogger, articleCatalogService);
+            orderService = new OrderService(orderServiceLogger, articleCatalogService, orderRepository);
         }
 
         protected string GenerateGuid()

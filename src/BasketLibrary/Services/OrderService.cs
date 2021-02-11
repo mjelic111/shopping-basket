@@ -2,26 +2,27 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using BasketLibrary.Models;
+using BasketLibrary.Repositories;
 using Microsoft.Extensions.Logging;
 
 namespace BasketLibrary.Services
 {
     public class OrderService : IOrderService
     {
-        // TODO replace with proper storage
-        private List<OrderDto> orders = new List<OrderDto>();
         private readonly ILogger<OrderService> logger;
         private readonly IArticleCatalogService articleCatalogService;
+        private readonly IOrderRepository orderRepository;
 
-        public OrderService(ILogger<OrderService> logger, IArticleCatalogService articleCatalogService)
+        public OrderService(ILogger<OrderService> logger, IArticleCatalogService articleCatalogService, IOrderRepository orderRepository)
         {
-            this.articleCatalogService = articleCatalogService;
             this.logger = logger;
+            this.articleCatalogService = articleCatalogService;
+            this.orderRepository = orderRepository;
         }
         public string CreateNewOrder()
         {
             var id = Guid.NewGuid().ToString();
-            orders.Add(new OrderDto { Id = id, OrderItems = new List<OrderItemDto>() });
+            orderRepository.Add(new OrderDto { Id = id, OrderItems = new List<OrderItemDto>() });
             return id;
         }
 
@@ -121,7 +122,7 @@ namespace BasketLibrary.Services
         }
         private OrderDto FindOrderById(string orderId)
         {
-            return orders.Where(o => o.Id.Equals(orderId, StringComparison.OrdinalIgnoreCase)).SingleOrDefault();
+            return orderRepository.GetOrderById(orderId);
         }
 
     }
