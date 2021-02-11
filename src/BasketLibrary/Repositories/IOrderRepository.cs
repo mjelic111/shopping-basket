@@ -1,4 +1,5 @@
 using BasketLibrary.Models;
+using BasketLibrary.Services;
 
 namespace BasketLibrary.Repositories
 {
@@ -7,5 +8,7 @@ namespace BasketLibrary.Repositories
         string Add(OrderDto order);
 
         OrderDto GetOrderById(string id);
+
+        string AddDiscountToOrder(string orderId, IDiscountService discountService);
     }
 }

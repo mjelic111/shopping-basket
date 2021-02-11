@@ -96,9 +96,22 @@ namespace BasketLibrary.Services
             return Response<string>.Success($"Article {article.Name} added to order, new quantity: {orderItem.Quantity}!");
         }
 
-        public Response<string> RegisterDiscount(IDiscountService discountService)
+        public Response<string> RegisterDiscount(string orderId, IDiscountService discountService)
         {
-            throw new NotImplementedException();
+            var order = FindOrderById(orderId);
+            if (order == null)
+            {
+                return Response<string>.Error($"Order with id: {orderId} not found!");
+            }
+            try
+            {
+                var discountServiceId = orderRepository.AddDiscountToOrder(orderId, discountService);
+                return Response<string>.Success($"Discount with id: {discountServiceId} added to order.");
+            }
+            catch (Exception ex)
+            {
+                return Response<string>.Error(ex.Message);
+            }
         }
 
         public double GetOrderTotalPrice(string orderId)
