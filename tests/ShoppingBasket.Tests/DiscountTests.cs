@@ -105,7 +105,7 @@ namespace ShoppingBasket.Tests
             // act
             var price = orderService.GetOrderTotalPrice(orderId);
             // assert
-            price.Should().Be(new decimal(3.1));
+            price.Should().Be(3.1M);
         }
 
         [Fact]
@@ -122,7 +122,27 @@ namespace ShoppingBasket.Tests
             // act
             var price = orderService.GetOrderTotalPrice(orderId);
             // assert
-            price.Should().Be(new decimal(3.45));
+            price.Should().Be(3.45M);
+        }
+
+        [Fact]
+        public void GetOrderTotalPrice_BreadAndMilkDiscount()
+        {
+            // arrange
+            articleCatalogService.RegisterArticle(butterArticle);
+            articleCatalogService.RegisterArticle(milkArticle);
+            articleCatalogService.RegisterArticle(breadArticle);
+
+            var orderId = orderService.CreateNewOrder();
+            orderService.RegisterDiscount(orderId, new MilkDiscountService(articleCatalogService));
+            orderService.RegisterDiscount(orderId, new BreadDiscountService(articleCatalogService));
+            orderService.AddArticleToOrder(orderId, milkArticle.Id, 8);
+            orderService.AddArticleToOrder(orderId, butterArticle.Id, 2);
+            orderService.AddArticleToOrder(orderId, breadArticle.Id, 1);
+            // act
+            var price = orderService.GetOrderTotalPrice(orderId);
+            // assert
+            price.Should().Be(9);
         }
     }
 

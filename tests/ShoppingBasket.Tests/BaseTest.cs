@@ -36,9 +36,9 @@ namespace ShoppingBasket.Tests
             // order service
             orderService = new OrderService(orderServiceLogger, articleCatalogService, orderRepository);
             // articles
-            butterArticle = new ArticleDto { Id = Guid.NewGuid().ToString(), Name = "Butter", Price = new decimal(0.8) };
-            milkArticle = new ArticleDto { Id = Guid.NewGuid().ToString(), Name = "Milk", Price = new decimal(1.15) };
-            breadArticle = new ArticleDto { Id = Guid.NewGuid().ToString(), Name = "Bread", Price = new decimal(1.0) };
+            butterArticle = new ArticleDto { Id = Guid.NewGuid().ToString(), Name = "Butter", Price = 0.8M };
+            milkArticle = new ArticleDto { Id = Guid.NewGuid().ToString(), Name = "Milk", Price = 1.15M };
+            breadArticle = new ArticleDto { Id = Guid.NewGuid().ToString(), Name = "Bread", Price = 1.0M };
         }
 
         protected string GenerateGuid()
@@ -47,11 +47,10 @@ namespace ShoppingBasket.Tests
         }
         protected string InitArticlesCatalog()
         {
-            var id = Guid.NewGuid().ToString();
-            articleCatalogService.RegisterArticle(new ArticleDto { Id = Guid.NewGuid().ToString(), Name = "Butter", Price = new decimal(0.8) });
-            articleCatalogService.RegisterArticle(new ArticleDto { Id = id, Name = "Milk", Price = new decimal(1.15) });
-            articleCatalogService.RegisterArticle(new ArticleDto { Id = Guid.NewGuid().ToString(), Name = "Bread", Price = new decimal(1.0) });
-            return id;
+            articleCatalogService.RegisterArticle(butterArticle);
+            articleCatalogService.RegisterArticle(milkArticle);
+            articleCatalogService.RegisterArticle(breadArticle);
+            return milkArticle.Id;
         }
     }
 }

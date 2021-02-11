@@ -12,6 +12,7 @@ namespace BasketLibrary.Services
         public string Id { get; }
         public MilkDiscountService(IArticleCatalogService articleCatalog)
         {
+            Id = Guid.NewGuid().ToString();
             this.articleCatalog = articleCatalog;
         }
         public Response<ArticleDto> CalculateDiscount(IEnumerable<OrderItemDto> orderItems, bool removeItemsOnDiscount = true)
@@ -30,6 +31,10 @@ namespace BasketLibrary.Services
             // count
             var milkCount = orderItems.Where(i => i.Article.Id.Equals(milkArticle.Id, StringComparison.OrdinalIgnoreCase)).Select(e => e.Quantity).SingleOrDefault();
             var discount = milkCount / 4 * (milkArticle.Price);
+            if (removeItemsOnDiscount)
+            {
+                orderItems.Where(i => i.Article.Id.Equals(milkArticle.Id, StringComparison.OrdinalIgnoreCase)).SingleOrDefault().Quantity %= 4;
+            }
             return Response<ArticleDto>.Success(new ArticleDto { Id = Id, Name = "Forth milk gratis", Price = discount });
         }
     }

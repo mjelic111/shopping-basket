@@ -12,8 +12,8 @@ namespace BasketLibrary.Services
 
         public BreadDiscountService(IArticleCatalogService articleCatalog)
         {
-            this.articleCatalog = articleCatalog;
             Id = Guid.NewGuid().ToString();
+            this.articleCatalog = articleCatalog;
         }
         public Response<ArticleDto> CalculateDiscount(IEnumerable<OrderItemDto> orderItems, bool removeItemsOnDiscount = true)
         {
@@ -39,6 +39,11 @@ namespace BasketLibrary.Services
             var breadCount = orderItems.Where(i => i.Article.Id.Equals(breadArticle.Id, StringComparison.OrdinalIgnoreCase)).Select(e => e.Quantity).SingleOrDefault();
             var discountQuantity = Math.Min(butterCount / 2, breadCount);
             var discount = discountQuantity * (breadArticle.Price / 2);
+            if (removeItemsOnDiscount)
+            {
+                orderItems.Where(i => i.Article.Id.Equals(butterArticle.Id, StringComparison.OrdinalIgnoreCase)).SingleOrDefault().Quantity -= discountQuantity * 2;
+                orderItems.Where(i => i.Article.Id.Equals(breadArticle.Id, StringComparison.OrdinalIgnoreCase)).SingleOrDefault().Quantity -= discountQuantity;
+            }
             return Response<ArticleDto>.Success(new ArticleDto { Id = Id, Name = "Bread 50% off", Price = discount });
         }
     }
