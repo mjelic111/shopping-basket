@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using BasketLibrary.Models;
 using BasketLibrary.Repositories;
 using Microsoft.Extensions.Logging;
@@ -127,8 +128,18 @@ namespace BasketLibrary.Services
         {
             try
             {
-                var items = orderRepository.GetAllOrderItems(orderId).ToList();
+                var printText = new StringBuilder();
+                printText.AppendLine($"Order: {orderId}");
+                printText.AppendLine("Name".PadRight(20) + "| Quantity".PadRight(10) + "| Price".PadRight(10) + "| Total".PadRight(15));
+                printText.AppendLine("--------------------------------------------------");
 
+                var items = orderRepository.GetAllOrderItems(orderId).ToList();
+                // print items
+                foreach (var item in items)
+                {
+                    printText.AppendLine(item.Article.Name.PadRight(20) + $"| {item.Quantity}".PadRight(10) +
+                    $"| {item.Article.Price}".PadRight(10) + $"| {item.Quantity * item.Article.Price}".PadRight(15));
+                }
                 var sum = items.Sum(i => i.Article.Price * i.Quantity);
                 decimal discountPrice = 0;
                 foreach (var discountService in orderRepository.GetAllOrderDiscounts(orderId))
@@ -137,6 +148,9 @@ namespace BasketLibrary.Services
                     if (response.IsError == false)
                     {
                         discountPrice += response.Data.Price;
+                        // print discount
+                        printText.AppendLine(response.Data.Name.PadRight(20) + "| 1".PadRight(10)
+                        + $"| {-response.Data.Price}".PadRight(10) + $"| {-response.Data.Price}".PadRight(15));
                     }
                 }
                 var totalSum = sum - discountPrice;
@@ -144,6 +158,10 @@ namespace BasketLibrary.Services
                 {
                     totalSum = 0;
                 }
+                // print total sum
+                printText.AppendLine("--------------------------------------------------");
+                printText.AppendLine("Total:".PadRight(42) + totalSum);
+                logger.LogInformation(printText.ToString());
                 return totalSum;
             }
             catch (Exception ex)
@@ -165,6 +183,5 @@ namespace BasketLibrary.Services
         {
             return orderRepository.GetOrderById(orderId);
         }
-
     }
 }

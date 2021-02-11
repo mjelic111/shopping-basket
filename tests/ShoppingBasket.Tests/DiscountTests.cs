@@ -91,6 +91,26 @@ namespace ShoppingBasket.Tests
         }
 
         [Fact]
+        public void GetOrderTotalPrice_NoDiscount()
+        {
+            // arrange
+            articleCatalogService.RegisterArticle(butterArticle);
+            articleCatalogService.RegisterArticle(milkArticle);
+            articleCatalogService.RegisterArticle(breadArticle);
+
+            var orderId = orderService.CreateNewOrder();
+            orderService.RegisterDiscount(orderId, new MilkDiscountService(articleCatalogService));
+            orderService.RegisterDiscount(orderId, new BreadDiscountService(articleCatalogService));
+            orderService.AddArticleToOrder(orderId, breadArticle.Id, 1);
+            orderService.AddArticleToOrder(orderId, butterArticle.Id, 1);
+            orderService.AddArticleToOrder(orderId, milkArticle.Id, 1);
+            // act
+            var price = orderService.GetOrderTotalPrice(orderId);
+            // assert
+            price.Should().Be(2.95M);
+        }
+
+        [Fact]
         public void GetOrderTotalPrice_BreadDiscount()
         {
             // arrange
