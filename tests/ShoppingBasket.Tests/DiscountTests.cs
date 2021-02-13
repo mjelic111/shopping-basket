@@ -198,6 +198,53 @@ namespace ShoppingBasket.Tests
             Times.Once);
 
         }
+
+        [Fact]
+        public void GetOrderTotalPrice_EmptyBasket()
+        {
+
+            // arrange
+            articleCatalogService.RegisterArticle(butterArticle);
+            articleCatalogService.RegisterArticle(milkArticle);
+            articleCatalogService.RegisterArticle(breadArticle);
+            // orderService
+            var orderId = orderService.CreateNewOrder();
+            orderService.RegisterDiscount(orderId, new MilkDiscountService(articleCatalogService));
+            orderService.RegisterDiscount(orderId, new BreadDiscountService(articleCatalogService));
+            orderService.AddArticleToOrder(orderId, milkArticle.Id, 8);
+            orderService.AddArticleToOrder(orderId, butterArticle.Id, 2);
+            orderService.AddArticleToOrder(orderId, breadArticle.Id, 1);
+            orderService.UpdateOrderItemQuantity(orderId, milkArticle.Id, 0);
+            orderService.UpdateOrderItemQuantity(orderId, butterArticle.Id, 0);
+            orderService.UpdateOrderItemQuantity(orderId, breadArticle.Id, 0);
+            // act
+            var price = orderService.GetOrderTotalPrice(orderId);
+            // assert
+            price.Should().Be(0);
+
+        }
+
+        [Fact]
+        public void GetOrderTotalPrice_NoDiscountMatch()
+        {
+
+            // arrange
+            articleCatalogService.RegisterArticle(butterArticle);
+            articleCatalogService.RegisterArticle(milkArticle);
+            articleCatalogService.RegisterArticle(breadArticle);
+            // orderService
+            var orderId = orderService.CreateNewOrder();
+            orderService.RegisterDiscount(orderId, new MilkDiscountService(articleCatalogService));
+            orderService.RegisterDiscount(orderId, new BreadDiscountService(articleCatalogService));
+            orderService.AddArticleToOrder(orderId, milkArticle.Id, 3);
+            orderService.AddArticleToOrder(orderId, butterArticle.Id, 1);
+            orderService.AddArticleToOrder(orderId, breadArticle.Id, 2);
+            // act
+            var price = orderService.GetOrderTotalPrice(orderId);
+            // assert
+            price.Should().Be(6.25M);
+
+        }
     }
 
 }
