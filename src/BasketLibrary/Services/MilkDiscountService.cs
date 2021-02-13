@@ -15,7 +15,7 @@ namespace BasketLibrary.Services
             Id = Guid.NewGuid().ToString();
             this.articleCatalog = articleCatalog;
         }
-        public Response<ArticleDto> CalculateDiscount(IEnumerable<OrderItemDto> orderItems, bool removeItemsOnDiscount = true)
+        public Response<OrderItemDto> CalculateDiscount(IEnumerable<OrderItemDto> orderItems, bool removeItemsOnDiscount = true)
         {
             // buy 3 milks and get 4th for free
 
@@ -24,18 +24,23 @@ namespace BasketLibrary.Services
             if (response.IsError)
             {
                 // cannot find butter
-                return Response<ArticleDto>.Error("Milk not found!");
+                return Response<OrderItemDto>.Error("Milk not found!");
             }
             var milkArticle = response.Data;
 
             // count
             var milkCount = orderItems.Where(i => i.Article.Id.Equals(milkArticle.Id, StringComparison.OrdinalIgnoreCase)).Select(e => e.Quantity).SingleOrDefault();
-            var discount = milkCount / 4 * (milkArticle.Price);
+            // var discount = milkCount / 4 * (milkArticle.Price);
             if (removeItemsOnDiscount)
             {
                 orderItems.Where(i => i.Article.Id.Equals(milkArticle.Id, StringComparison.OrdinalIgnoreCase)).SingleOrDefault().Quantity %= 4;
             }
-            return Response<ArticleDto>.Success(new ArticleDto { Id = Id, Name = "Forth milk gratis", Price = discount });
+            return Response<OrderItemDto>.Success(new OrderItemDto
+            {
+                Id = Id,
+                Article = new ArticleDto { Id = Id, Name = "Forth milk gratis", Price = milkArticle.Price },
+                Quantity = milkCount / 4
+            });
         }
     }
 }

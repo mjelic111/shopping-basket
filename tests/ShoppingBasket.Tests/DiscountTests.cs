@@ -1,5 +1,8 @@
+using System;
 using BasketLibrary.Services;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
+using Moq;
 using Xunit;
 
 namespace ShoppingBasket.Tests
@@ -163,6 +166,37 @@ namespace ShoppingBasket.Tests
             var price = orderService.GetOrderTotalPrice(orderId);
             // assert
             price.Should().Be(9);
+        }
+
+        [Fact]
+        public void GetOrderTotalPrice_LoggerShouldBeCalled()
+        {
+
+            // arrange
+            articleCatalogService.RegisterArticle(butterArticle);
+            articleCatalogService.RegisterArticle(milkArticle);
+            articleCatalogService.RegisterArticle(breadArticle);
+            // orderService
+            var loggerMock = new Mock<ILogger<OrderService>>();
+            var moqOrderService = new OrderService(loggerMock.Object, articleCatalogService, orderRepository);
+            var orderId = orderService.CreateNewOrder();
+            moqOrderService.RegisterDiscount(orderId, new MilkDiscountService(articleCatalogService));
+            moqOrderService.RegisterDiscount(orderId, new BreadDiscountService(articleCatalogService));
+            moqOrderService.AddArticleToOrder(orderId, milkArticle.Id, 8);
+            moqOrderService.AddArticleToOrder(orderId, butterArticle.Id, 2);
+            moqOrderService.AddArticleToOrder(orderId, breadArticle.Id, 1);
+            // act
+            var price = moqOrderService.GetOrderTotalPrice(orderId);
+            // assert
+            loggerMock.Verify(
+            x => x.Log(
+                LogLevel.Information,
+                It.IsAny<EventId>(),
+                It.IsAny<It.IsAnyType>(),
+                It.IsAny<Exception>(),
+                (Func<It.IsAnyType, Exception, string>)It.IsAny<object>()),
+            Times.Once);
+
         }
     }
 

@@ -14,14 +14,23 @@ namespace BasketLibrary.Services
             this.discountValue = discountValue;
             Id = Guid.NewGuid().ToString();
         }
-        public Response<ArticleDto> CalculateDiscount(IEnumerable<OrderItemDto> orderItems, bool removeItemsOnDiscount = true)
+        public Response<OrderItemDto> CalculateDiscount(IEnumerable<OrderItemDto> orderItems, bool removeItemsOnDiscount = true)
         {
-            return Response<ArticleDto>.Success(new ArticleDto
-            {
-                Id = Id,
-                Name = "Simple discount",
-                Price = discountValue
-            });
+            return Response<OrderItemDto>.Success(
+                new OrderItemDto
+                {
+                    Id = Id,
+                    Article = new ArticleDto
+                    {
+                        Id = Id,
+                        Name = "Simple discount",
+                        Price = discountValue
+                    }
+                    ,
+                    Quantity = 1
+                }
+
+            );
         }
     }
 }
