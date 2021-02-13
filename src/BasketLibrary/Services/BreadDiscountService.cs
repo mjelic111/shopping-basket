@@ -41,8 +41,16 @@ namespace BasketLibrary.Services
             // var discount = discountQuantity * (breadArticle.Price / 2);
             if (removeItemsOnDiscount)
             {
-                orderItems.Where(i => i.Article.Id.Equals(butterArticle.Id, StringComparison.OrdinalIgnoreCase)).SingleOrDefault().Quantity -= discountQuantity * 2;
-                orderItems.Where(i => i.Article.Id.Equals(breadArticle.Id, StringComparison.OrdinalIgnoreCase)).SingleOrDefault().Quantity -= discountQuantity;
+                var butterItem = orderItems.Where(i => i.Article.Id.Equals(butterArticle.Id, StringComparison.OrdinalIgnoreCase)).SingleOrDefault();
+                if (butterItem != null)
+                {
+                    butterItem.Quantity -= discountQuantity * 2;
+                }
+                var breadItem = orderItems.Where(i => i.Article.Id.Equals(breadArticle.Id, StringComparison.OrdinalIgnoreCase)).SingleOrDefault();
+                if (breadItem != null)
+                {
+                    breadItem.Quantity -= discountQuantity;
+                }
             }
             return Response<OrderItemDto>.Success(new OrderItemDto
             {

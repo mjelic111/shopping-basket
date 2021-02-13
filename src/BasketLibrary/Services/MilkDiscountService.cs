@@ -33,7 +33,11 @@ namespace BasketLibrary.Services
             // var discount = milkCount / 4 * (milkArticle.Price);
             if (removeItemsOnDiscount)
             {
-                orderItems.Where(i => i.Article.Id.Equals(milkArticle.Id, StringComparison.OrdinalIgnoreCase)).SingleOrDefault().Quantity %= 4;
+                var milkItem = orderItems.Where(i => i.Article.Id.Equals(milkArticle.Id, StringComparison.OrdinalIgnoreCase)).SingleOrDefault();
+                if (milkItem != null)
+                {
+                    milkItem.Quantity %= 4;
+                }
             }
             return Response<OrderItemDto>.Success(new OrderItemDto
             {
