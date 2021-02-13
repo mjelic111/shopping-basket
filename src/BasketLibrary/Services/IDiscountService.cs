@@ -6,6 +6,6 @@ namespace BasketLibrary.Services
     public interface IDiscountService
     {
         string Id { get; }
-        Response<ArticleDto> CalculateDiscount(IEnumerable<OrderItemDto> orderItems, bool removeItemsOnDiscount = true);
+        Response<OrderItemDto> CalculateDiscount(IEnumerable<OrderItemDto> orderItems, bool removeItemsOnDiscount = true);
     }
 }

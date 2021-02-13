@@ -126,17 +126,15 @@ namespace BasketLibrary.Services
 
         public decimal GetOrderTotalPrice(string orderId)
         {
-            var printText = new StringBuilder();
-            printText.AppendLine($"Order: {orderId}");
-            printText.AppendLine("Name".PadRight(20) + "| Quantity".PadRight(10) + "| Price".PadRight(10) + "| Total".PadRight(15));
-            printText.AppendLine("--------------------------------------------------");
+            // TODO if needed introduce caching layer
+            var textBuilder = new StringBuilder();
+            PrintOrderItemHeader(textBuilder, orderId);
 
             var items = orderRepository.GetAllOrderItems(orderId).ToList();
             // print items
             foreach (var item in items)
             {
-                printText.AppendLine(item.Article.Name.PadRight(20) + $"| {item.Quantity}".PadRight(10) +
-                $"| {item.Article.Price}".PadRight(10) + $"| {item.Quantity * item.Article.Price}".PadRight(15));
+                PrintOrderItem(textBuilder, item);
             }
             var sum = items.Sum(i => i.Article.Price * i.Quantity);
             decimal discountPrice = 0;
@@ -145,10 +143,10 @@ namespace BasketLibrary.Services
                 var response = discountService.CalculateDiscount(items);
                 if (response.IsError == false)
                 {
-                    discountPrice += response.Data.Price;
+                    discountPrice += response.Data.Article.Price * response.Data.Quantity;
                     // print discount
-                    printText.AppendLine(response.Data.Name.PadRight(20) + "| 1".PadRight(10)
-                    + $"| {-response.Data.Price}".PadRight(10) + $"| {-response.Data.Price}".PadRight(15));
+                    PrintOrderItem(textBuilder, response.Data);
+
                 }
             }
             var totalSum = sum - discountPrice;
@@ -157,9 +155,8 @@ namespace BasketLibrary.Services
                 totalSum = 0;
             }
             // print total sum
-            printText.AppendLine("--------------------------------------------------");
-            printText.AppendLine("Total:".PadRight(42) + totalSum);
-            logger.LogInformation(printText.ToString());
+            PrintOrderItemFooter(textBuilder, totalSum);
+            logger.LogInformation(textBuilder.ToString());
             return totalSum;
         }
 
@@ -175,6 +172,34 @@ namespace BasketLibrary.Services
         private OrderDto FindOrderById(string orderId)
         {
             return orderRepository.GetOrderById(orderId);
+        }
+
+        private void PrintOrderItemHeader(StringBuilder builder, string orderId)
+        {
+            builder
+                .AppendLine($"Order: {orderId}")
+                .AppendLine("--------------------------------------------------")
+                .Append("Name".PadRight(20))
+                .Append("| Quantity".PadRight(10))
+                .Append("| Price".PadRight(10))
+                .AppendLine("| Total".PadRight(15))
+                .AppendLine("--------------------------------------------------");
+        }
+
+        private void PrintOrderItem(StringBuilder builder, OrderItemDto item)
+        {
+            builder
+                .Append(item.Article.Name.PadRight(20))
+                .Append($"| {item.Quantity}".PadRight(10))
+                .Append($"| {item.Article.Price}".PadRight(10))
+                .AppendLine($"| {item.Quantity * item.Article.Price}".PadRight(15));
+        }
+
+        private void PrintOrderItemFooter(StringBuilder builder, decimal totalSum)
+        {
+            builder
+                .AppendLine("--------------------------------------------------")
+                .AppendLine("Total:".PadRight(42) + totalSum);
         }
     }
 }
